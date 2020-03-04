@@ -1,0 +1,62 @@
+﻿
+@using eManager.WebModels;
+@model ActivityViewModel
+
+@{
+    ViewBag.Title = "Adding activity";
+    Layout = "_Layout";
+
+}
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<div class="modal fade" id="addActivityModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Activity details</h4>
+            </div>
+            <div class="modal-body">
+
+                <form method="post" asp-controller="Employee" asp-action="AddActivity" id="uploadActivity">
+
+                    @Html.HiddenFor(model => model.ActivityId)
+                    <label for="Name">Description:</label>
+                    @Html.TextBox("Description", null, new { @class = "form-control" })<br />
+
+
+                    <div>
+                        <label for="Date">Date of activity:</label>
+                        @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "invoiceDate", @Value = DateTime.Now.ToLongDateString() } })
+                        @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+                    </div>
+                    <br />
+
+
+                    <label for="Client">Client:</label>
+                    @Html.DropDownListFor(c => c.ClientSelected, Model.Clients, "--Select client--")
+                    <br />
+
+                    <button class="btn btn-success" role="button" onclick="location.href='@Url.Action("EmployeesActivities", "Employee")'" type="submit">Add</button>
+
+                </form>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("EmployeesActivities", "Employee")'">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(function () {
+        $("#addActivityModal").modal();
+    });
+
+
+
+</script>

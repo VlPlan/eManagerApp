@@ -1,0 +1,167 @@
+﻿@using eManager.WebModels;
+@model List<ServiceViewModel>
+
+@{
+    ViewBag.Title = "Our Services";
+    Layout = "_Layout";
+    var counter = 0;
+
+
+
+}
+
+<div class="container" id="services">
+    <h3 class="text-muted">Services</h3>
+    <button style="font-size:16px" class="btn-floating btn-success" onclick="location.href='@Url.Action("NewService", "Service")'"><i class="fa fa-plus"></i> Add Service</button><br />
+
+    <div id="msgAdd" class="alert-success" style="display:none">SERVICE ADDED!</div><br /><br />
+    <div id="createdInvoice" style="display:none">
+        <button role="button" class="fa fa-info" style="background-color:olivedrab;color:#fff;" onclick="location.href='@Url.Action("CurrentInvoice", "Invoice")'">Go to Invoice</button>
+    </div><br />
+   
+          <div>
+              <span class="input-group-text">Select client</span>
+              @Html.DropDownList("clientSelect",null, "--- Select client ---", new { @class = "form-control", @id="selectClient"})
+             
+          </div>
+          
+
+    <br />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>ID</th>
+                <th>Service</th>
+                <th>Quantity</th>
+                <th>Client</th>
+                <th>Currency</th>
+                <th>Price (without VAT)</th>
+                <th>Currency Rate</th>
+
+            </tr>
+        </thead>
+        <tbody class="services" id="servicesTable" style="display:none;">
+
+            @foreach (var service in Model)
+            {
+
+                <tr>
+                    <td>@(counter += 1)</td>
+                    <td>@service.ServiceId</td>
+                    <td>@service.Name</td>
+                    <td>
+                        @service.Quantity
+                        @using (Html.BeginForm("UpdateQuantity", "Service", FormMethod.Post))
+                        {
+                            <input name="serviceId" value="@service.ServiceId" type="hidden" />
+
+
+                            <div class="row">
+                                <div class="input-group">
+
+                                    <input type="text" name="quantity" class="form-control input-number" maxlength="9" value=@service.Quantity />
+                                    &nbsp;<span id="addMsg">
+                                    </span>
+
+                                </div>
+                            </div>
+                            <button type="submit">Change quantity</button>
+
+
+                        }
+
+
+                    </td>
+                    <td>@service.SelectedClient</td>
+
+                    <td>@service.Currency</td>
+                    <td>@service.Price</td>
+                    <td>
+                        @if (service.Currency == CurrencyView.EUR)
+                        {
+                            @service.CurrencyRate
+                            @using (Html.BeginForm("UpdatePrice", "Service", FormMethod.Post))
+                            {
+
+                                <input name="serviceId" value="@service.ServiceId" type="hidden" />
+                                <div class="row">
+                                    <div class="input-group">
+                                        <span>
+                                            Insert currency:
+                                            <input type="text" name="currencyRate" class="form-control input-number" maxlength="9" value=@service.CurrencyRate />
+                                        </span>
+                                        &nbsp;<span id="addMsg"></span>
+
+                                    </div>
+                                </div>
+                                <button type="submit">Convert</button>
+                            }
+
+                        }
+                    </td>
+                    <td>
+                        <button value="@service.ServiceId" class="btn btn-primary serviceItem" role="button">Add To Invoice</button> |
+                        <a asp-controller="Service" asp-action="RemoveService" asp-route-id="@service.ServiceId"><i class="fa fa-trash" aria-hidden="true"></i> Remove</a>
+
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+</div>
+
+
+<script>
+    let services = document.getElementsByClassName("services")[0];
+    console.log(services);
+    services.addEventListener("click", function (e) {
+
+        e.stopPropagation();
+        let target = e.target;
+
+
+        let targetId = target.classList.contains("serviceItem") ? target.value : null;
+        console.log(targetId);
+        console.log(targetId);
+        if (targetId != null) {
+            fetch("/Invoice/AddDetailsToInvoice?serviceId=" + targetId, {
+                method: "post",
+
+            })
+
+
+        }
+
+
+    })
+
+    $('.serviceItem').click(function () {
+        $('#createdInvoice').show();
+        setTimeout(function () {
+
+            $("#msgAdd").show().fadeOut(3000);
+        }, 400)
+    })
+
+
+
+
+    $(document).ready(function () {
+
+        $('#selectClient').change(function () {
+            $("#servicesTable").show();
+            var value = $(this).val().toLowerCase();
+            $("#servicesTable tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+
+    
+
+
+</script>

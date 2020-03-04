@@ -1,0 +1,63 @@
+﻿@using eManager.WebModels;
+@model IPagedList<ClientViewModel>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@{
+    ViewBag.Title = "Our Clients";
+
+}
+
+
+<link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+<div class="container" id="listClients">
+    <h2>Clients list</h2>
+    <p> <a class="btn btn-info btn-rounded" asp-controller="Client" asp-action="RegisterNewClient">Register new client</a></p><br />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th></th>
+                <th>Client</th>
+                <th>Description</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Tax No. | Bank Acc</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var client in Model)
+            {
+
+                <tr>
+
+                    <td>@client.ClientId</td>
+                    <td><img class="card-img-top" src=@Url.Content("~/UploadedFiles/" + client.LogoImage) style="width: 5rem; height: 5rem;" /></td>
+                    <td>@client.Name</td>
+                    <td>@client.Description</td>
+                    <td>@client.Phone</td>
+                    <td>@client.Email</td>
+                    <td>@client.Address</td>
+                    <td>
+                        Tax No: @client.TaxNumber<br />
+                        Bank Acc: @client.BankAccount
+                    </td>
+                    <td>
+                        <a asp-action="UpdateClientInfo" asp-controller="Client" asp-route-id="@client.ClientId">Update details</a> |
+                        <a asp-action="RemoveClient" asp-controller="Client" asp-route-id="@client.ClientId">Remove</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("ShowClients",
+    new { page, sort = ViewBag.CurrentSort, filter = ViewBag.CurrentFilter }))
+</div>
+
+
+

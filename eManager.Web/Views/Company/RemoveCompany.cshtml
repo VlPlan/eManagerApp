@@ -1,0 +1,41 @@
+﻿
+@using eManager.WebModels;
+@model CompanyViewModel
+
+@{
+    ViewBag.Title = "Remove company";
+    Layout = "_Layout";
+
+}
+
+<div class="modal fade" id="removeCompanyModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Are you sure you want to delete @Model.Name ?</h4>
+            </div>
+
+            <div class="modal-body">
+                <form method="post" asp-controller="Company" asp-action="RemoveCompany">
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("ShowCompanies", "Company")'">Cancel</button>
+                </form>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(function () {
+        $("#removeCompanyModal").modal();
+    });
+</script>
+
+

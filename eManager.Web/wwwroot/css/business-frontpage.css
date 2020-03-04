@@ -1,0 +1,23 @@
+﻿/*!
+ * Start Bootstrap - Busines Frontpage (https://startbootstrap.com/template-overviews/business-frontpage)
+ * Copyright 2013-2019 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-business-frontpage/blob/master/LICENSE)
+ */
+
+
+* {
+    box-sizing: border-box;
+}
+
+.navbar{
+    border:none;
+    border-bottom:3px solid transparent;
+}
+
+
+body {
+    /*margin: auto;*/
+    display: block;
+    font-family: 'Open Sans', 'HelveticaNeue', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    padding-top: 56px;
+}

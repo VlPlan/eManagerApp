@@ -1,0 +1,151 @@
+﻿@using eManager.WebModels;
+@model ProcurementViewModel
+@{
+
+    ViewBag.Title = "Procurement Informations";
+    Layout = "_Layout";
+    var statusInit = ProcurementStatusViewModel.Approved;
+}
+
+<h3><em>Procurement details:</em></h3>
+
+<div class="container">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                <label asp-for="User.FullName"></label>
+                <p>@Model.User.FullName</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label asp-for="Id"></label>
+                <p>@Model.Id</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label asp-for="ProcurementStatus"></label>
+                <p>@Model.ProcurementStatus</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label asp-for="Date"></label>
+                <p>@Model.Date</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label asp-for="ProcurementProducts"></label>
+                @if (Model.ProcurementProducts.Count() > 0)
+                {
+                    <ul>
+
+                        @foreach (var product in Model.ProcurementProducts)
+                        {
+
+                            <li>
+                                Descripton: @product.Name | Cost: @{var total = product.Price * product.Quantity;} @total MKD(denars) | Quantity: @product.Quantity
+
+
+
+                                @using (Html.BeginForm("UpdateQuantity", "Procurement", FormMethod.Post))
+                                {
+                                    <input name="procurementId" value="@Model.Id" type="hidden" />
+                                    <input name="productId" value="@product.Id" type="hidden" />
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-field="">
+                                                    <span class="glyphicon glyphicon-minus">-</span>
+                                                </button>
+                                            </span>
+                                            <input type="text" name="quantity" class="form-control input-number" maxlength="4" value=@product.Quantity />
+                                            &nbsp;<span id="addMsg"></span>
+                                            <span class="input-group-btn">
+                                                <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field="">
+                                                    <span class="glyphicon glyphicon-plus">+</span>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <button type="submit">Add Quantity</button>
+
+                                }
+
+                              
+                            </li>
+
+
+                        }
+                    </ul>
+                    @if (Model.ProcurementStatus == ProcurementStatusViewModel.Pending)
+                    {
+                        <div>
+                            <a asp-action="ConfirmProcurement" asp-controller="Procurement" asp-route-procurementId="@Model.Id" class="btn btn-primary">Approve</a>
+                            <a asp-action="DeclineProcurement" asp-controller="Procurement" asp-route-procurementId="@Model.Id" class="btn btn-danger">Decline</a>
+                        </div>
+                    }
+                    else if (Model.ProcurementStatus == ProcurementStatusViewModel.Approved)
+                    {
+                        <div>Waiting for delivery!</div>
+                        <a asp-controller="Procurement" asp-action="ChangeStatus" asp-route-procurementId="@Model.Id" asp-route-statusId="1" class="btn btn-info">Proceed procurement</a>
+                    }
+                    else if (Model.ProcurementStatus == ProcurementStatusViewModel.Declined)
+                    {
+                        <div>Procurement is declined!</div>
+                        <a asp-controller="Procurement" asp-action="ChangeStatus" asp-route-procurementId="@Model.Id" asp-route-statusId="1" class="btn btn-info">Proceed procurement</a>
+                    }
+                    else
+                    {
+                        <div>Pending request....</div>
+                    }
+
+                }
+                else
+                {
+                    <p>List is empty!</p>
+                }
+            </div>
+          
+        </div>
+    </div>
+</div>
+
+<script>
+    
+   
+    $(document).ready(function () {
+  
+        var i = 0;
+        $('.input-number').each(function () {
+            i++;
+            var newID = 'productQty' + i;
+            $(this).attr('id', newID);
+            $(this).val(i);
+
+        })
+       
+
+        $('.quantity-right-plus').on("click", function (e) {
+            e.preventDefault();
+            var quantity = parseInt($('.input-number').val());
+            console.log(this.quantity);
+            console.log(this.id);
+            $('.input-number').val(quantity + 1);
+          
+        });
+
+            $('.quantity-left-minus').click(function (e) {
+                e.preventDefault();
+                var quantity = parseInt($('.input-number').val());
+                if (quantity > 0) {
+                $('.input-number').val(quantity - 1);
+                }
+            });
+      
+        });
+
+
+</script>

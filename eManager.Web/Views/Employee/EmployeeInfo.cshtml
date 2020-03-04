@@ -1,0 +1,284 @@
+﻿
+@using eManager.WebModels;
+@model EmployeeViewModel
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Employee Informations";
+
+
+}
+<div class="container">
+    <input asp-for="@Model.Id" hidden />
+    <h2>Employee informations:</h2>
+
+    <br />
+
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Employee details: <span style="color:blue">@Model.FirstName @Model.LastName</span></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <b>Company ID:</b>
+        </div>
+        <div class="col-md-3">@Html.DisplayFor(item => item.EmployeeNumber)</div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <b>Name:</b>
+        </div>
+        <div class="col-md-3">@Html.DisplayFor(item => item.FirstName)</div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <b>Surname:</b>
+        </div>
+        <div class="col-md-3">@Html.DisplayFor(item => item.LastName)</div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <b>Department:</b>
+        </div>
+        <div class="col-md-3">@Html.DisplayFor(item => item.Department)</div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <b>Birthdate:</b>
+        </div>
+        <div class="col-md-3">@Html.DisplayFor(item => item.DateOfBirth)</div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <b>Phone:</b>
+        </div>
+        <div class="col-md-3">@Html.DisplayFor(item => item.Phone)</div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <b>Salary:</b>
+        </div>
+        <div class="col-md-3">@Html.DisplayFor(item => item.Salary)</div>
+    </div>
+    <br />
+
+    <div class="row">
+        <div class="col-md-12">
+            <b>Documents for @Model.FirstName:</b>
+
+            <div class="row">
+
+                <div class="card-body">
+                    <p>ID card:</p>
+                    <img class="card-img-top" src=@Url.Content("~/UploadedFiles/" + Model.IdCard) style="width: 16rem; height: 16rem;" />
+                </div>
+                <div class="card-body">
+                    <p>M1M2 work permit:</p>
+                    <img class="card-img-top" src=@Url.Content("~/UploadedFiles/" + Model.M1M2) style="width: 16rem; height: 16rem;" />
+                </div>
+                <div class="card-body">
+                    <p>Medical documentation:</p>
+                    <img class="card-img-top" src=@Url.Content("~/UploadedFiles/" + Model.Medical) style="width: 16rem; height: 16rem;" />
+                </div>
+                <div class="card-body">
+                    <p>Health&Safety documentation:</p>
+                    <img class="card-img-top" src=@Url.Content("~/UploadedFiles/" + Model.HSafety) style="width: 16rem; height: 16rem;" />
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <br />
+    <p>
+
+        <a asp-action="ShowEmployees" asp-controller="Employee" class="btn btn-primary">Back</a>
+
+    </p>
+    </div>
+
+
+    <script>
+
+        $(function () {
+            $("#addDocumentsEmployee").modal();
+        });
+
+
+        $("#uploadImage").change(function (e) {
+            e.preventDefault();
+            var element = this;
+            var formInfo = new FormData();
+            var totalFiles = element.files.length;
+
+            for (i = 0; i < totalFiles; i++) {
+                var file = element.files[i];
+              
+                formInfo.append("IdCard", file);
+              
+                
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Employee/UploadDocuments",
+                data: formInfo,
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                success: function (response) {
+
+                    console.log(response);
+                    if (response) {
+
+                        alert("Success");
+
+
+                    }
+                },
+                error: function () {
+                    console.log("Error");
+                }
+            });
+        });
+
+        $("#uploadMedicalDoc").change(function (e) {
+            e.preventDefault();
+            var element = this;
+            var formInfo = new FormData();
+            var totalFiles = element.files.length;
+
+            for (i = 0; i < totalFiles; i++) {
+                
+                var file = element.files[i];
+      
+                formInfo.append("Medical", file);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Employee/UploadDocuments",
+                data: formInfo,
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                success: function (response) {
+
+                    console.log(response);
+                    if (response) {
+
+                        alert("Success");
+
+
+                    }
+                },
+                error: function () {
+                    console.log("Error");
+                }
+            });
+        });
+
+
+        $("#uploadM1M2").change(function (e) {
+            e.preventDefault();
+            var element = this;
+            var formInfo = new FormData();
+            var totalFiles = element.files.length;
+
+            for (i = 0; i < totalFiles; i++) {
+
+                var file = element.files[i];
+
+                formInfo.append("M1M2", file);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Employee/UploadDocuments",
+                data: formInfo,
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                success: function (response) {
+
+                    console.log(response);
+                    if (response) {
+
+                        alert("Success");
+
+
+                    }
+                },
+                error: function () {
+                    console.log("Error");
+                }
+            });
+        });
+
+
+        $("#uploadHS").change(function (e) {
+            e.preventDefault();
+            var element = this;
+            var formInfo = new FormData();
+            var totalFiles = element.files.length;
+
+            for (i = 0; i < totalFiles; i++) {
+
+                var file = element.files[i];
+
+                formInfo.append("HSafety", file);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Employee/UploadDocuments",
+                data: formInfo,
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                success: function (response) {
+
+                    console.log(response);
+                    if (response) {
+
+                        alert("Success");
+
+
+                    }
+                },
+                error: function () {
+                    console.log("Error");
+                }
+            });
+        });
+
+
+
+        $('#upload').submit(function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: this.action,
+                type: this.method,
+                data: new FormData(this),
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    console.log(data.UploadedFileCount + ' file(s) uploaded successfully');
+                    $("#IdCard").show();
+                    $("#Medical").show();
+                    $("#M1M2").show();
+                    $("#HSafety").show();
+                },
+                error: function (xhr, error, status) {
+                    console.log(error, status);
+                }
+            });
+        });
+
+        
+ 
+    </script>

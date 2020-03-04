@@ -1,0 +1,294 @@
+﻿@using eManager.WebModels;
+@model InvoiceViewModel
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Invoice details";
+    var counter = 0;
+    double totalVal=0;
+    string eur = " euro";
+
+    string mkd = " денари";
+}
+
+
+
+<div class="container" id="invoiceContent">
+
+    <div class="row">
+        <div class="col-md-12" id="logoImg">
+            <img src=@Url.Content("~/images/logo.png") width="120" height="80" />
+        </div>
+        
+
+    </div>
+    <div class="row" style="font-family:Impact">
+        <div class="col-md-12">
+            <hr />
+            <h3>ОГНООТПОРНО д.о.о. <small>ТРГОВСКО ДРУШТВО ЗА ПРОИЗВОДСТВО,ТРГОВИЈА И УСЛУГИ ИЗВОЗ-УВОЗ</small></h3>
+            <h6>Скопје ул. “16 Македонска бригада” бр. 18  тел/фах 3287 801/3287 806</h6>
+            <h6><small>жиро сметка 300000000202572 Комерцијална банка</small></h6>
+            <h6><small>е.д.б. МК4030995187257</small></h6><br />
+            <hr />
+        </div>
+    </div>
+    <br /><br />
+          <div class="row">
+              <div class="col-md-3">
+                  <div class="input-group-prepend" >
+                      <span class="input-group-text">Client:</span>
+                  </div>
+                  <div style="border:1px solid black">
+                      <div>
+                          @Html.DisplayFor(x => x.Client.Name)
+                      </div>
+                      <div>
+                          @Html.DisplayFor(x => x.Client.Address)
+                      </div>
+                  </div>
+              </div>
+              <div class="col-md-5"></div>
+              <div class="col-md-3" style="border:1px solid black">
+                  <label for="InvoiceNumber">Invoice No.: </label><span>@Html.DisplayFor(x => x.InvoiceNumber)</span><br />
+                  <label for="InvoiceDate">Date: </label><span>@Html.DisplayFor(x => x.InvoiceDate)</span><br />
+                  <label for="PaymentPeriod">Payment period (days): </label><span>@Html.DisplayFor(x => x.PaymentPeriod)</span><br />
+                  <label for="DueDate">Due Date: </label><span>@Html.DisplayFor(x => x.DueDate)</span>
+              </div>
+              <div class="col-md-1"></div>
+          </div>
+    <br />
+    <div class="row">
+        <div class="col-md-6">
+            @Html.DisplayFor(x => x.Description)
+        </div>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody class="invoiceServices">
+
+
+            @foreach (var item in Model.InvoiceServices)
+            {
+
+                <tr>
+                    <td>@(counter += 1)</td>
+                    <td>@item.Name</td>
+                    <td>@item.Quantity.ToString("N0")</td>
+                    <td>@item.Price</td>
+
+                    <td>
+                        @{
+                     
+                            var totalNoVAT = item.Price * item.Quantity;
+                        }
+
+                        @totalNoVAT.ToString("N0")
+
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>TOTAL (VAT Excl.):</td>
+                <td>
+                    @{var sumVAT = Model.InvoiceServices.Sum(x => x.Price * x.Quantity); var resultVAT = sumVAT * 0.18;}
+                    @{var sumTOTAL = Model.InvoiceServices.Sum(x => x.Price * x.Quantity); var sumWithVAT = sumTOTAL + resultVAT; }
+                    @if (Model.InvoiceServices.Any(x => x.CurrencyRate == 1 && x.Currency == CurrencyView.EUR))
+                    {
+                        @sumTOTAL.ToString("N0") @eur
+                    }
+                    else
+                    {
+                        @sumTOTAL.ToString("N0") @mkd
+                    }
+
+
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>VAT:</td>
+                <td>
+                    @{ string mitalVatMsg = "Напомена: Пренесување на даночна обврска согласно чл.32-а став 1,точка 2 и член 53, став 6 од Закон за ДДВ.";}
+                    @{ var nullVat = 0;}
+                    @if (Model.InvoiceServices.Any(x => x.CurrencyRate == 1 && x.Currency == CurrencyView.EUR))
+                    {
+                        @nullVat
+                    }
+                    @if (Model.ClientName.ToLower().Contains("arcelor") || Model.ClientName.ToLower().Contains("aрцелор") || Model.ClientName.ToLower().Contains("Liberty") || Model.ClientName.ToLower().Contains("Либерти"))
+                    {
+
+                        @mitalVatMsg
+
+                    }
+                    @if (Model.InvoiceServices.Any(x => x.Currency == CurrencyView.MKD))
+                    {
+
+                        @resultVAT.ToString("N0") @mkd
+                    }
+                    @if (Model.InvoiceServices.Any(x => x.CurrencyRate != 1 && x.Currency == CurrencyView.EUR))
+                    {
+                        @resultVAT.ToString("N0") @mkd
+                    }
+
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><bold>TOTAL:</bold></td>
+                <td id="totalValue">
+
+                    @if (Model.InvoiceServices.Any(x => x.Currency == CurrencyView.EUR && x.CurrencyRate == 1) || Model.ClientName.ToLower().Contains("aрцелор") || Model.ClientName.ToLower().Contains("arcelor") || Model.ClientName.ToLower().Contains("Liberty") || Model.ClientName.ToLower().Contains("Либерти"))
+                    {
+                        totalVal = sumTOTAL;
+
+                        @totalVal.ToString("N0")
+                    }
+                    else
+                    {
+                        totalVal = sumWithVAT;
+                        @totalVal.ToString("N0")
+                    }
+
+
+                </td>
+
+            </tr>
+            <tr>
+                <td colspan="5">
+                    Total amount is:
+                    <span id="amount">
+
+                    </span>
+                </td>
+            </tr>
+
+        </tfoot>
+    </table>
+
+    <br />
+    <div class="row col-md-12">
+        <div class="col-md-6">
+            <p>Authorized employee for invoicing:</p>
+            <p>Name:</p>
+            <p>Signature: <hr /></p>
+        </div>
+        <div class="col-md-6">
+            <p>OGNOOTPORNO d.o.o.</p>
+            <p>Manager</p>
+            <p>Signature: <hr /></p>
+        </div>
+    </div>
+</div>
+<br />
+
+
+<div id="footerInvoice">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.href='@Url.Action("Invoices", "Invoice")'">Back</button>
+    <button class="btn btn-success" onclick="printInvoice()">PRINT</button>
+</div>
+    <script type="text/javascript" src=@Url.Content("//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js")></script>
+
+<script>
+
+    function numToWord(num) {
+
+
+        let oneDigit = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+        let tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+        let twoDigits = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+
+
+        function trillion(num) {
+            if (num >= 1000000000000) {
+                return trillion(Math.floor(num / 1000000000000)) + "trillion" + million(num % 1000000000000);
+            }
+            else {
+                return million(num);
+            }
+        }
+
+        function million(num) {
+            if (num >= 1000000) {
+                return million(Math.floor(num / 1000000)) + "million" + thousand(num % 1000000);
+            }
+            else {
+                return thousand(num);
+            }
+        }
+
+        function thousand(num) {
+            if (num >= 1000) {
+                return hundred(Math.floor(num / 1000)) + "thousand" + hundred(num % 1000);
+            }
+            else {
+                return hundred(num);
+            }
+        }
+
+        function hundred(num) {
+            if (num > 99) {
+                return oneDigit[Math.floor(num / 100)] + "hundred" + tensToWord(num % 100);
+            }
+            else {
+                return tensToWord(num);
+            }
+        }
+
+        function tensToWord(num) {
+            if (num < 10) return oneDigit[num];
+            else if (num >= 10 && num < 20) return twoDigits[num - 10];
+            else {
+                return tens[Math.floor(num / 10)] + oneDigit[num % 10];
+            }
+        }
+
+        function convert(num) {
+            if (num === 0) return "zero";
+            else return trillion(num);
+        }
+
+
+        return convert(num);
+    }
+
+
+            $('#amount').append(numToWord(@totalVal));
+
+
+    function printInvoice() {
+
+     
+        //var printContents = document.getElementById('invoiceContent').innerHTML;
+
+
+        //var originalContents = document.body.innerHTML;
+      
+        //document.body.innerHTML = printContents;
+        $('#footerInvoice').hide();
+        window.print();
+        $('#footerInvoice').show();
+        //document.body.innerHTML = originalContents;
+    }
+
+</script>

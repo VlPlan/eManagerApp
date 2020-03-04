@@ -1,0 +1,71 @@
+﻿@using eManager.WebModels;
+@model IPagedList<CompanyViewModel>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@{
+    ViewBag.Title = "Companies";
+
+}
+
+<div class="container" id="listCompanies">
+    <h2>Vendors list</h2>
+    <p> <a class="btn btn-success btn-rounded" asp-controller="Company" asp-action="AddCompany">Add Vendor</a></p><br />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Company Name</th>
+                <th>Description</th>
+                <th>Phone</th>
+                <th>Contact Person</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var company in Model)
+            {
+
+                <tr>
+
+                    <td>@company.Id</td>
+                    <td>@company.Name</td>
+                    <td>@company.Description</td>
+                    <td>@company.Phone</td>
+                    <td>@company.ContactPerson</td>
+                    <td>@company.Email</td>
+                    <td>@company.Address</td>
+                    <td>
+
+                        <a asp-action="UpdateCompanyInfo" asp-controller="Company" asp-route-id="@company.Id" id="editCompanyBtn">Edit details</a> |
+                        <a asp-action="RemoveCompany" asp-controller="Company" asp-route-id="@company.Id" id="removeCompanyBtn">Remove</a> |
+                        <a asp-controller="Product" asp-action="UploadProduct">Add product</a>
+
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("ShowCompanies",
+    new { page, sort = ViewBag.CurrentSort, filter = ViewBag.CurrentFilter }))
+</div>
+<div id="modalVendor">
+
+</div>
+
+
+<script>
+
+    $(function () {
+        $("#editCompanyInfoModal").modal();
+    });
+
+
+</script>
+

@@ -1,0 +1,94 @@
+﻿@*@using eManager.WebModels
+@model EmployeeViewModel
+
+@{
+    Layout = "_Layout";
+
+
+}
+
+<div class="modal fade" id="addDocumentsEmployee">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h5 class="modal-title">Adding documents for @Model.FirstName's archive</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" asp-controller="Employee" asp-action="UploadDocuments" id="upload">
+                    @Html.HiddenFor(model => model.Id)
+                    <div class="form-group">
+                        <div class="col-md-10">
+                            <p>Upload Id Card (.png, .jpg):</p>
+                            <input id="IdCard" name="IdCard" type="hidden" />
+                            <input id="uploadImage" type="file" name="IdCard" />
+
+                        </div>
+
+                        <div class="form-group">
+                            <span>@ViewBag.Message</span>
+
+                        </div>
+                    </div>
+
+
+                    <button class="btn btn-success" role="button" onclick="location.href='@Url.Action("ShowEmployees", "Employee")'">Add</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(function () {
+        $("#addDocumentsEmployee").modal();
+    });
+
+
+    $('#upload').submit(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: this.action,
+            type: this.method,
+            data: new FormData(this),
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log(data.UploadedFileCount + ' file(s) uploaded successfully');
+                $("#IdCard").show();
+                $("#Medical").show();
+
+            },
+            error: function (xhr, error, status) {
+                console.log(error, status);
+            }
+        });
+    });
+
+
+
+
+    $('#addDocumentsEmployee').change(function (e) {
+        e.preventDefault();
+        var element = this;
+        var formInfo = new FormData();
+        var totalFiles = element.files.length;
+
+        for (i = 0; i < totalFiles; i++) {
+            var file = element.files[i];
+            formInfo.append("IdCard", file);
+        }
+    });
+
+
+
+
+
+
+
+
+</script>*@

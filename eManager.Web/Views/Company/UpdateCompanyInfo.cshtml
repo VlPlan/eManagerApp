@@ -1,0 +1,65 @@
+﻿
+@using eManager.WebModels;
+@model CompanyViewModel
+
+@{
+    ViewBag.Title = "Change company details";
+    Layout = "_Layout";
+
+}
+
+
+<div class="modal fade" id="editCompanyInfoModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Edit informations for @Model.Name</h4>
+            </div>
+
+                    <div class="modal-body">
+                        <form method="post" enctype="multipart/form-data" asp-controller="Company" asp-action="UpdateCompanyInfo">
+                            @Html.HiddenFor(model => model.Id)
+                            <label for="Name">Name:</label>
+                            @Html.TextBox("Name", null, new { @class = "form-control" })<br />
+                            <label for="Description">Description:</label>
+                            @Html.TextBox("Description", null, new { @class = "form-control" })<br />
+                            <label for="Address">Address:</label>
+                            @Html.TextBox("Address", null, new { @class = "form-control" })<br />
+                            <label for="ContactPerson">Contact person:</label>
+                            @Html.TextBox("ContactPerson", null, new { @class = "form-control" })<br />
+                            <label for="Email">Email:</label>
+                            @Html.TextBox("Email", null, new { @class = "form-control" })<br />
+                            <label for="Phone">Phone:</label>
+                            @Html.TextBox("Phone", null, new { @class = "form-control" })<br />
+                            <label for="TaxNumber">Company Tax Number:</label>
+                            @Html.TextBox("TaxNumber", null, new { @class = "form-control" })<br />
+                            <label for="BankAccount">Bank account:</label>
+                            @Html.TextBox("BankAccount", null, new { @class = "form-control" })<br />
+
+                            <button type="submit" class="btn btn-success">Save Changes</button>
+
+                        </form>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("ShowCompanies", "Company")'">Close</button>
+                    </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+  
+
+    $(function () {
+        $("#editCompanyInfoModal").modal();
+    });
+
+   
+
+
+</script>

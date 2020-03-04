@@ -1,0 +1,297 @@
+﻿@using eManager.WebModels;
+@model InvoiceViewModel
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "New Invoice";
+    var counter = 0;
+    double sumVat = 0;
+    double sumTotal = 0;
+    double nullVat=0;
+}
+
+<style>
+    .alert-message-danger {
+        background-color: #fdf7f7;
+        border-color: #d9534f;
+    }
+
+        .alert-message-danger h4 {
+            color: #d9534f;
+        }
+</style>
+
+<div id="msgRemove" class="alert-danger" style="display:none">SERVICE REMOVED!</div><br />
+
+
+<br/>
+<div class="container" id="currentInvoice" style="display:none">
+
+    <form method="post" asp-controller="Invoice" asp-action="RegisterInvoice">
+        @Html.HiddenFor(x => x.Id)
+        <div class="row">
+            <div class="col-md-6">
+                <label for="InvoiceNumber">Invoice No.: </label><span>@Html.DisplayFor(x => x.InvoiceNumber)</span>
+            </div>
+        </div>
+        <br />
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">@Html.LabelFor(model => model.InvoiceDate, htmlAttributes: new { @class = "control-label col-md-2" })</span>
+                </div>
+                @*@Value = Model.InvoiceDate.ToString("{0:d}")*@
+                @Html.EditorFor(model => model.InvoiceDate, new { htmlAttributes = new { @class = "invoiceDate", @Value = DateTime.Today.ToString("dd/MM/yyyy") } })
+                @Html.ValidationMessageFor(model => model.InvoiceDate, "", new { @class = "text-dang" })
+
+
+            </div>
+
+
+            <div class="col-md-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">@Html.LabelFor(x => x.PaymentPeriod)</span>
+                </div>
+
+                @Html.TextBox("PaymentPeriod", null, new { @class = "form-control dueDate", @type = "number" })
+
+            </div>
+
+            <div class="col-md-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">@Html.LabelFor(x => x.ClientName)</span>
+                </div>
+                @Html.DisplayFor(x => x.Client.Name)
+            </div>
+
+            <div class="col-md-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">@Html.LabelFor(x => x.ClientAddress)</span>
+                </div>
+                @Html.DisplayFor(x => x.Client.Address)
+            </div>
+
+        </div>
+
+        <br />
+        <div class="col-md-3">
+            <a class="fa fa-refresh" style="background-color:cadetblue;color:#fff;border:medium;" asp-action="CurrentInvoice" asp-controller="Invoice">Refresh Invoice</a>
+        </div>
+
+        <br />
+        <div class="row">
+            <div class="col-md-6">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">@Html.LabelFor(x => x.Description)</span>
+                </div>
+
+                @Html.TextBox("Description", null, new { @class = "form-control", @type = "text" })
+            </div>
+        </div>
+
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ID</th>
+                    <th>Description</th>
+                    <th>Unit Price</th>
+                    <th>Quantity</th>
+                    <th>VAT</th>
+                    <th>Total</th>
+                    <th></th>
+
+
+                </tr>
+            </thead>
+            <tbody class="invoiceServices">
+
+
+                @foreach (var item in Model.InvoiceServices)
+                {
+
+                    <tr>
+                        <td>@(counter += 1)</td>
+
+                        <td>@item.ServiceId</td>
+                        <td>@item.Name</td>
+                        <td>@item.Price</td>
+                        <td>@item.Quantity.ToString("N0")</td>
+                        <td>
+                            @{ var vat = item.Price * 0.18 * item.Quantity;}
+
+                            @if (Model.InvoiceServices.Any())
+                            {
+                                @if (item.Currency == CurrencyView.EUR && item.CurrencyRate == 1)
+                                {
+                                    @nullVat
+                                }
+                                @if (Model.ClientName.ToLower().Contains("arcelor") || Model.ClientName.ToLower().Contains("aрцелор") || Model.ClientName.ToLower().Contains("Liberty") || Model.ClientName.ToLower().Contains("Либерти"))
+                                {
+                                    @nullVat
+
+                                }
+                                @if (Model.InvoiceServices.Any(x => x.CurrencyRate != 1 && x.Currency == CurrencyView.EUR))
+                                {
+
+                                    @vat.ToString("N0")
+                                }
+                            }
+
+
+
+
+                        </td>
+                        <td>
+                            @{ var totalWithVat = item.Price * item.Quantity + vat; var totalWithoutVat = item.Price * item.Quantity;}
+                            @if (item.Currency == CurrencyView.EUR && item.CurrencyRate == 1 || Model.ClientName.ToLower().Contains("arcelor") || Model.ClientName.ToLower().Contains("aрцелор") || Model.ClientName.ToLower().Contains("Liberty") || Model.ClientName.ToLower().Contains("Либерти"))
+                            {
+                                @totalWithoutVat.ToString("N0")
+                            }
+                            @if (Model.InvoiceServices.Any(x => x.CurrencyRate != 1 && x.Currency == CurrencyView.EUR))
+                            {
+
+                                @totalWithVat.ToString("N0")
+                            }
+                        </td>
+                        <td><button value="@item.ServiceId" class="fa fa-trash invoiceService" role="button"></button></td>
+                    </tr>
+
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Total:</td>
+                    <td>
+                        @{var sumVAT = Model.InvoiceServices.Sum(x => x.Price * x.Quantity); var resultVAT = sumVAT * 0.18;}
+                        @{var nullVAT = 0;}
+                        @{string mitalVatMsg = "Напомена: Пренесување на даночна обврска согласно чл.32-а став 1,точка 2 и член 53, став 6 од Закон за ДДВ.";}
+                        @if (Model.InvoiceServices.Any())
+                        {
+                            @if (Model.InvoiceServices.Any(x => x.CurrencyRate == 1 && x.Currency == CurrencyView.EUR))
+                            {
+
+                                @nullVAT
+                            }
+                            @if (Model.ClientName.ToLower().Contains("arcelor") || Model.ClientName.ToLower().Contains("aрцелор") || Model.ClientName.ToLower().Contains("Liberty") || Model.ClientName.ToLower().Contains("Либерти"))
+                            {
+
+                                @mitalVatMsg
+
+                            }
+                            @if (Model.InvoiceServices.Any(x => x.CurrencyRate != 1 && x.Currency == CurrencyView.EUR))
+                            {
+
+                                @resultVAT.ToString("N0")
+                            }
+
+                        }
+
+
+
+
+                    </td>
+                    <td>
+                        @{var sumTOTAL = Model.InvoiceServices.Sum(x => x.Price * x.Quantity); var sumWithVAT = sumTOTAL + resultVAT; }
+                        @if (Model.InvoiceServices.Any(x => x.Currency == CurrencyView.EUR && x.CurrencyRate == 1) || Model.ClientName.ToLower().Contains("arcelor") || Model.ClientName.ToLower().Contains("aрцелор") || Model.ClientName.ToLower().Contains("Liberty") || Model.ClientName.ToLower().Contains("Либерти"))
+                        {
+                            @sumTOTAL.ToString("N0")
+                        }
+                        else
+                        { @sumWithVAT.ToString("N0")
+
+                    }
+
+                    </td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+
+
+
+        <div class="col-md-6">
+            <div class="col-md-offset-4 col-md-10">
+                <input type="submit" value="Create Invoice" class="btn btn-info" />
+
+            </div>
+        </div>
+
+    </form>
+
+</div>
+<div id="emptyInvoice" style="display:none">
+    <div class="col-sm-6 col-md-6">
+        <div class="alert-message alert-message-danger">
+            <h4>
+                EMPTY INVOICE
+            </h4>
+            <p>
+                There is no current invoice, please add items to invoice by selecting from a list in <strong><a href="@Url.Action("Services", "Service")">services section</a></strong>.
+            </p>
+        </div>
+    </div>
+</div>
+<br />
+<br />
+
+<hr />
+
+<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.href='@Url.Action("Invoices", "Invoice")'">Back</button>
+<button type="button" class="btn btn-success" onclick="location.href='@Url.Action("Services", "Service")'">Add Item</button>
+<script type="text/javascript" src=@Url.Content("//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js")></script>
+@*<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>*@
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+<script>
+
+
+
+    let invoiceServices = document.getElementsByClassName("invoiceServices")[0];
+    console.log(invoiceServices);
+    invoiceServices.addEventListener("click", function (e) {
+
+        e.preventDefault();
+        let target = e.target;
+
+
+        let targetId = target.classList.contains("invoiceService") ? target.value : null;
+        console.log(targetId);
+        console.log(targetId);
+        if (targetId != null) {
+            fetch("/Invoice/RemoveDetailsFromInvoice?serviceId=" + targetId, {
+                method: "delete",
+
+            })
+
+
+        }
+
+
+    })
+
+    $('.invoiceService').click(function () {
+        setTimeout(function () {
+
+            $("#msgRemove").show().fadeOut(3000);
+        }, 400)
+    })
+
+
+    $(document).ready(function () {
+        if (@Model.InvoiceServices.Count()> 0) {
+            $("#currentInvoice").show();
+        }
+        else {
+            $("#emptyInvoice").show();
+        }
+    })
+
+</script>

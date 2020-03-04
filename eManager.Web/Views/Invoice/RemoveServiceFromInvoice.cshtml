@@ -1,0 +1,39 @@
+﻿
+@using eManager.WebModels;
+@model ServiceViewModel
+
+@{
+    ViewBag.Title = "Remove service from invoice";
+
+}
+
+<div class="modal fade" id="RemoveServiceFromInvoiceModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Remove service from invoice?</h4>
+            </div>
+
+            <div class="modal-body">
+                <form method="post" asp-controller="Invoice" asp-action="RemoveServiceFromInvoice">
+                    <button type="submit" class="btn btn-danger">Remove</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("CurrentInvoice", "Invoice")'">Cancel</button>
+                </form>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(function () {
+        $("#RemoveServiceFromInvoiceModal").modal();
+    });
+</script>
+
+

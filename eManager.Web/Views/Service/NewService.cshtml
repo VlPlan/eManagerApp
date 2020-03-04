@@ -1,0 +1,78 @@
+﻿
+@using eManager.WebModels;
+@model ServiceViewModel
+
+@{
+    ViewBag.Title = "New Service";
+    Layout = "_Layout";
+
+}
+
+
+<div class="modal fade" id="addServiceModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Service details</h4>
+            </div>
+            <div class="modal-body">
+
+                <form method="post" asp-controller="Service" asp-action="NewService">
+
+                    @Html.HiddenFor(model => model.ServiceId)
+                    <label for="Name">Description:</label>
+                    @Html.TextBox("Name", null, new { @class = "form-control" })<br />
+
+
+                    <label for="Price">Price:</label>
+                    @Html.TextBox("Price", null, new { @class = "form-control" })<br />
+
+                    <label for="Quantity">Quantity:</label>
+                    @Html.TextBox("Quantity", null, new { @class = "form-control" })<br />
+
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <label for="Currency">Currency:</label>
+                            @Html.DropDownListFor(x => x.Currency, Html.GetEnumSelectList(Model.Currency.GetType()))
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <span class="input-group-text">Client:</span>
+                            @Html.DropDownListFor(c => c.SelectedClientId, Model.Clients, "--Select client--")
+                        </div>
+                        @ViewBag.Message
+                        @*@Model.SelectedClient*@
+          
+
+                    </div>
+                    <br/>
+                    <button class="btn btn-success" role="button">Add Service</button>
+
+                </form>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("Services", "Service")'">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+
+    $(function () {
+        $("#addServiceModal").modal();
+    });
+
+
+
+
+
+</script>

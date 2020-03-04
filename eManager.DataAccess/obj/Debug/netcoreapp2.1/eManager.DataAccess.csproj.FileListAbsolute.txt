@@ -1,0 +1,12 @@
+C:\Users\User\source\repos\eManager\eManager.DataAccess\bin\Debug\netcoreapp2.1\eManager.DataAccess.deps.json
+C:\Users\User\source\repos\eManager\eManager.DataAccess\bin\Debug\netcoreapp2.1\eManager.DataAccess.dll
+C:\Users\User\source\repos\eManager\eManager.DataAccess\bin\Debug\netcoreapp2.1\eManager.DataAccess.pdb
+C:\Users\User\source\repos\eManager\eManager.DataAccess\bin\Debug\netcoreapp2.1\eManager.Domain.dll
+C:\Users\User\source\repos\eManager\eManager.DataAccess\bin\Debug\netcoreapp2.1\eManager.Domain.pdb
+C:\Users\User\source\repos\eManager\eManager.DataAccess\obj\Debug\netcoreapp2.1\eManager.DataAccess.csprojAssemblyReference.cache
+C:\Users\User\source\repos\eManager\eManager.DataAccess\obj\Debug\netcoreapp2.1\eManager.DataAccess.csproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\eManager\eManager.DataAccess\obj\Debug\netcoreapp2.1\eManager.DataAccess.AssemblyInfoInputs.cache
+C:\Users\User\source\repos\eManager\eManager.DataAccess\obj\Debug\netcoreapp2.1\eManager.DataAccess.AssemblyInfo.cs
+C:\Users\User\source\repos\eManager\eManager.DataAccess\obj\Debug\netcoreapp2.1\eManager.DataAccess.csproj.CopyComplete
+C:\Users\User\source\repos\eManager\eManager.DataAccess\obj\Debug\netcoreapp2.1\eManager.DataAccess.dll
+C:\Users\User\source\repos\eManager\eManager.DataAccess\obj\Debug\netcoreapp2.1\eManager.DataAccess.pdb

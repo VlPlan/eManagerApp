@@ -1,0 +1,132 @@
+﻿@using eManager.WebModels;
+@model EmployeeViewModel;
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Adding new employee";
+
+}
+
+
+@using (Html.BeginForm())
+{
+
+
+
+<div class="container">
+    <fieldset class="col-md-12">
+        <legend><strong>Employee Registry Form</strong></legend>
+        <form method="post" asp-controller="Employee" asp-action="AddEmployee">
+            @Html.HiddenFor(x => x.Id)
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">@Html.LabelFor(x => x.EmployeeNumber)</span>
+                    </div>
+                    @Html.TextBox("EmployeeNumber", null, new { @class = "form-control" })
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">@Html.LabelFor(x => x.FirstName)</span>
+                    </div>
+                    @Html.TextBox("FirstName", null, new { @class = "form-control" })
+                </div>
+
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">@Html.LabelFor(x => x.LastName)</span>
+                    </div>
+                    @Html.TextBox("LastName", null, new { @class = "form-control" })
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">@Html.LabelFor(x => x.Address)</span>
+                    </div>
+                    @Html.TextBox("Address", null, new { @class = "form-control" })
+                </div>
+                <br />
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">@Html.LabelFor(x => x.Phone)</span>
+                    </div>
+                    @Html.TextBox($"Phone", null, new { @class = "form-control" })
+                </div>
+                <br />
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">@Html.LabelFor(x => x.Department)</span>
+                    </div>
+                    @Html.DropDownListFor(x => x.Department, Html.GetEnumSelectList(Model.Department.GetType()))
+                </div>
+                <br />
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">@Html.LabelFor(model => model.DateOfBirth, htmlAttributes: new { @class = "control-label col-md-2" })</span>
+                    </div>
+                    @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control",  @Value = DateTime.Today.ToString("dd/MM/yyyy") } })
+                    @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
+                </div>
+                <br />
+                <div class="col-md-6">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">@Html.LabelFor(x => x.Salary)</span>
+                    </div>
+                    <p>@Html.TextBox($"Salary", null, new { @class = "form-control" })</p>
+                </div>
+
+           
+            <div class="col-md-6">
+                <div class="col-md-offset-4 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-success" />
+                </div>
+            </div>
+        </div>
+        </form>
+    </fieldset>
+
+</div>
+}
+<br />
+<br />
+<hr />
+
+    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.href='@Url.Action("ShowEmployees", "Employee")'">Back</button>
+<script>
+    let employees = document.getElementsByClassName("catalog")[0];
+    console.log(employees);
+    employees.addEventListener("click", function (e) {
+        e.stopPropagation();
+        let target = e.target;
+
+
+        let targetId = target.classList.contains("employeeCard") ? target.value : null;
+        console.log(targetId);
+
+        if (targetId != null) {
+            fetch("/Employee/AddEmployeesToActivity?employeeId=" + targetId, {
+                method: "post",
+
+            })
+
+
+        }
+
+
+    })
+
+
+    $('.employeeCard').click(function () {
+        setTimeout(function () {
+
+            $("#msg").show().fadeOut(3000);
+        }, 400)
+    })
+
+</script>

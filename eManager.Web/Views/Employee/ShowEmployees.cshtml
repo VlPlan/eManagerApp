@@ -1,0 +1,102 @@
+﻿@using eManager.WebModels;
+@model IPagedList<EmployeeViewModel>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Employees";
+
+
+}
+
+<div class="container" id="listEmployees">
+    <h2>Employees</h2>
+    <div class="row col-md-12">
+
+        <div class="col-md-6"> <a class="btn btn-primary" asp-controller="Employee" asp-action="AddEmployee">Create new employee</a></div>
+
+        <div class="col-md-6">
+            <input id="searchEmployee" type="text" placeholder="Search employee..">
+        </div>
+    </div>
+    <br/><br/>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Employee</th>
+                <th>Department</th>
+                <th>Employee's Info</th>
+            </tr>
+        </thead>
+        <tbody id="employeesTable">
+            @foreach (var employee in Model)
+            {
+
+                <tr>
+
+                    <td>@employee.EmployeeNumber</td>
+                    <td>@employee.FirstName @employee.LastName</td>
+                    <td>@employee.Department</td>
+                    <td>
+                        <a asp-action="EmployeeInfo" asp-controller="Employee" asp-route-id="@employee.Id" class="btn btn-primary">Info</a> |
+                        <a asp-action="UpdateEmployeeInfo" asp-controller="Employee" asp-route-id="@employee.Id" class="btn btn-success" id="editBtn">Edit profile</a> |                      
+                        <a asp-action="RemoveEmployee" asp-controller="Employee" asp-route-id="@employee.Id" class="btn btn-danger" id="removeBtn">Remove</a>
+
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Invoices",
+    new { page, sort = ViewBag.CurrentSort, filter = ViewBag.CurrentFilter }))
+</div>
+<div id="modalWrap">
+
+</div>
+
+
+<script>
+
+    $(function () {
+        $("#editModal").modal();
+    });
+
+
+
+    function editEmployeeInfo(employeeId) {
+        $.ajax({
+            url: "/Employee/UpdateEmployeeInfo/" + employeeId,
+            data: {
+                Id: $(this).attr('data-id')
+            },
+
+            success: function (emp) {
+                $("#modalWrap").html(emp);
+            }
+        });
+    }
+
+
+
+
+    $(document).ready(function () {
+        $("#searchEmployee").keyup(function () {
+
+            var value = $(this).val().toLowerCase();
+
+            console.log(value);
+            $("#employeesTable tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+
+</script>
+

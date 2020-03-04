@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+
+@{
+    bool isAdmin = User.IsInRole("admin");
+}
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>OGNOOTPORNO Skopje</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" href=@Url.Content("~/vendor/bootstrap/css/bootstrap.min.css")>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" type="text/css" href=@Url.Content("~/css/business-frontpage.css")>
+    <script type="text/javascript" src=@Url.Content("//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js")></script>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <div class="navbar-wrapper">
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg navbar-text bg-white fixed-top">
+                <div class="container">
+                    <img src="~/images/logo.png" width="80" height="60" />
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="navbar-collapse collapse" id="navbarResponsive">
+                        <ul class="navbar-nav ml-auto">
+                  
+                            <li class="nav-item active">
+                                <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                    Home
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+                
+
+                            @if (isAdmin)
+                            {
+                                <li><a asp-controller="Procurement" asp-action="AllProcurements">All procurements</a></li>
+                                <li class="align-right"><a asp-area="" asp-controller="User" asp-action="LogOut">Log out</a></li>
+                            }
+                            else
+                            {
+                                @if (User.Identity.IsAuthenticated)
+                                {
+
+                                    <li class="dropdown">
+                                        <a href="#" class="nav-link" data-toggle="dropdown" role="button">Activities</a>
+                                        <ul class="dropdown-menu">
+                                            <li><a asp-controller="Employee" asp-action="AddActivity">New Activity</a></li>
+                                            <li><a asp-controller="Employee" asp-action="EmployeesActivities">All Activities</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="dropdown">
+                                        <a href="#" class="nav-link" data-toggle="dropdown" role="button">Sales</a>
+                                        <ul class="dropdown-menu">
+                                            <li><a asp-controller="Service" asp-action="Services">Services</a></li>
+                                            <li><a asp-controller="Client" asp-action="ShowClients">Clients</a></li>
+                                            <li><a asp-controller="Invoice" asp-action="Invoices">Invoices</a></li>
+                                            <li><a asp-controller="Invoice" asp-action="CurrentInvoice">New Invoice</a></li>
+                                            <li><a asp-controller="Invoice" asp-action="SalesReport">Sales Report</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Employee" asp-action="ShowEmployees">Employees</a>
+                                    </li>
+                                    <li class="dropdown">
+                                        <a href="#" class="nav-link" data-toggle="dropdown" role="button">Procurements</a>
+                                        <ul class="dropdown-menu">
+                                            <li><a asp-controller="Product" asp-action="Products">Check products</a></li>
+                                            <li><a asp-controller="Procurement" asp-action="AllProcurements">All procurements</a></li>
+                                            <li><a asp-controller="Procurement" asp-action="Procurement">Procurements status</a></li>
+                                            <li><a asp-controller="Company" asp-action="ShowCompanies">Vendors</a></li>
+
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="User" asp-action="LogOut">Log out</a></li>
+                                    <li class="nav-item class="nav-link""><em><small>     Logged as @User.Identity.Name</small></em></li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="LogIn">Log in</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="Register">Register</a></li>
+                                }
+
+                            }
+
+
+                        </ul>
+
+                    </div>
+                </div>
+
+            </nav>
+
+        </div>
+    </div>
+
+    <br />
+    <br />
+
+
+    @RenderBody()
+
+    <br />
+    <br />
+    <br />
+
+    <!-- /.container -->
+    <!-- Footer -->
+    <footer class="py-5 bg-dark">
+        <div class="container">
+            <p class="m-0 text-center text-white"> <small>OGNOOTPORNO REFRACTORY SERVICES - SKOPJE</small></p>
+            <p class="m-0 text-center text-white"><small> &copy; VPlan 2020</small></p>
+        </div>
+        <!-- /.container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src=@Url.Content("//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js")></script>
+    <script src=@Url.Content("~/vendor/bootstrap/js/bootstrap.js")></script>
+    @await Component.InvokeAsync("NToastNotify")
+    @RenderSection("Scripts", required: false)
+</body>
+
+</html>

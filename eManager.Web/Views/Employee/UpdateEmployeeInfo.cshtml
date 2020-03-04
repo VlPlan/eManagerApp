@@ -1,0 +1,183 @@
+﻿
+@using eManager.WebModels;
+@model EmployeeViewModel
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Edit employee informations";
+
+
+}
+
+
+<div class="modal fade" id="editModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Edit informations for @Model.FirstName @Model.LastName</h4>
+            </div>
+
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" asp-controller="Employee" asp-action="UpdateEmployeeInfo" id="upload">
+                    @Html.HiddenFor(model => model.Id)
+                    <label for="EmployeeNumber">Employee ID:</label>
+                    @Html.TextBox("EmployeeNumber", null, new { @class = "form-control" })<br />
+                    <label for="FirstName">Name:</label>
+                    @Html.TextBox("FirstName", null, new { @class = "form-control" })<br />
+                    <label for="LastName">Surname:</label>
+                    @Html.TextBox("LastName", null, new { @class = "form-control" })<br />
+                    <label for="Address">Address:</label>
+                    @Html.TextBox("Address", null, new { @class = "form-control" })<br />
+                    <label for="DateOfBirth">Birthdate:</label>
+                    @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })<br />
+                    <label for="Department">Department:</label>
+                    @Html.DropDownListFor(x => x.Department, Html.GetEnumSelectList(Model.Department.GetType()))<br />
+                    <label for="Phone">Phone:</label>
+                    @Html.TextBox("Phone", null, new { @class = "form-control" })<br />
+                    <label for="Salary">Salary:</label>
+                    @Html.TextBox("Salary", null, new { @class = "form-control" })<br />
+
+                    <div>
+                        <hr />
+                        <h6>Upload documents for @Model.FirstName (.jpg, .png)</h6>
+                        <hr />
+
+                        <div class="form-group">
+
+                            <div class="col-md-10">
+                                @Html.TextBox("IdCard", null, new { @class = "form-control" })
+                                <p>ID card:</p>
+                                <input id="IdCard" name="IdCard" type="hidden" />
+                                <input id="uploadImage" type="file" name="IdCard" />
+                            </div>
+                        </div><br />
+
+
+                        <div class="form-group">
+
+                            <div class="col-md-10">
+                                @Html.TextBox("Medical", null, new { @class = "form-control" })
+                                <p>Medical documentation:</p>
+                                <input id="Medical" name="Medical" type="hidden" />
+                                <input id="uploadMedicalDoc" type="file" name="Medical" />
+                            </div>
+                        </div>
+                        <br />
+
+
+
+                        <div class="form-group">
+
+                            <div class="col-md-10">
+                                @Html.TextBox("M1M2", null, new { @class = "form-control" })
+                                <p>M1M2:</p>
+                                <input id="M1M2" name="M1M2" type="hidden" />
+                                <input id="uploadM1M2" type="file" name="M1M2" />
+                            </div>
+                        </div><br />
+
+
+
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                @Html.TextBox("HSafety", null, new { @class = "form-control" })
+                                <p>Health&Safety documentation:</p>
+                                <input id="HSafety" name="HSafety" type="hidden" />
+                                <input id="uploadHS" type="file" name="HSafety" />
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("ShowEmployees", "Employee")'">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+
+    $(function () {
+        $("#editModal").modal();
+    });
+
+    function editEmployeeInfo(employeeId) {
+        $.ajax({
+            type: "POST",
+            url: "/Employee/UpdateEmployeeInfo/" + employeeId,
+            success: function (emp) {
+                $("#modalWrap").html(emp);
+            }
+        });
+    }
+
+    $("#saveBtn").click(editEmployeeInfo(employeeId));
+
+
+
+    $('#upload').submit(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: this.action,
+            type: this.method,
+            data: new FormData(this),
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log(data.UploadedFileCount + ' file(s) uploaded successfully');
+                $("#Medical").show();
+                $("#IdCard").show();
+                $("#M1M2").show();
+                $("#HSafety").show();
+
+
+            },
+            error: function (xhr, error, status) {
+                console.log(error, status);
+            }
+        });
+    });
+
+
+
+
+    $('#editModal').change(function (e) {
+        e.preventDefault();
+        var element = this;
+        var formInfo = new FormData();
+        var totalFiles = element.files.length;
+
+        for (i = 0; i < totalFiles; i++) {
+            var file = element.files[i];
+            var file1 = element.files[i + 1];
+            var file2 = element.files[i + 2];
+            var file3 = element.files[i + 3];
+            formInfo.append("Medical", file);
+            formInfo.append("IdCard", file1);
+            formInfo.append("M1M2", file2);
+            formInfo.append("HSafety", file3);
+
+        }
+    })
+
+
+
+
+
+
+</script>

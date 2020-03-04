@@ -1,0 +1,109 @@
+﻿
+@using eManager.WebModels;
+@model ProductViewModel
+
+@{
+    ViewBag.Title = "Adding product";
+    Layout = "_Layout";
+
+}
+
+
+<div class="modal fade" id="addProductModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Product details</h4>
+            </div>
+            <div class="modal-body">
+
+                <form method="post" enctype="multipart/form-data" asp-controller="Product" asp-action="UploadProduct" id="upload">
+
+                    @Html.HiddenFor(model => model.Id)
+                    <label for="Name">Name:</label>
+                    @Html.TextBox("Name", null, new { @class = "form-control" })<br />
+
+
+                    <label for="Price">Price:</label>
+                    @Html.TextBox("Price", null, new { @class = "form-control" })<br />
+
+
+                    <label for="Company">Company (Vendor):</label>
+                    @Html.DropDownListFor(c => c.SelectedCompanyId, Model.Vendors, "--Select company--")
+                    <br />
+
+
+                    <div class="form-group">
+                        <div class="col-md-10">
+                            <p>Upload Image File (.png, .jpg):</p>
+                            <input id="ImageUrl" name="ImageUrl" type="hidden" />
+                            <input id="uploadImage" type="file" name="ImageUrl" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span>@ViewBag.Message</span>
+
+                    </div>
+
+                    <button class="btn btn-success" role="button" onclick="location.href='@Url.Action("Products", "Product")'">Add</button>
+
+                </form>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("Products", "Product")'">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+
+    $(function () {
+        $("#addProductModal").modal();
+    });
+
+
+
+    $('#upload').submit(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: this.action,
+            type: this.method,
+            data: new FormData(this),
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log(data.UploadedFileCount + ' file(s) uploaded successfully');
+                $("#ImageUrl").show();
+
+            },
+            error: function (xhr, error, status) {
+                console.log(error, status);
+            }
+        });
+    });
+
+
+    $('#addProductModal').change(function (e) {
+        e.preventDefault();
+        var element = this;
+        var formInfo = new FormData();
+        var totalFiles = element.files.length;
+
+        for (i = 0; i < totalFiles; i++) {
+            var file = element.files[i];
+            formInfo.append("ImageUrl", file);
+        }
+    })
+    
+
+</script>

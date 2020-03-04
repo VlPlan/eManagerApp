@@ -1,0 +1,110 @@
+﻿@using eManager.WebModels;
+@model ClientInvoiceViewModel 
+
+
+
+
+@{
+    ViewBag.Title = "Invoices";
+    var counter = 0;
+
+}
+
+<div class="container">
+    <h3 class="text-muted">Monthly Sales by Client (VAT Excl.)</h3>
+    <br />
+
+    @using (Html.BeginForm("SalesReport", "Invoice", FormMethod.Get))
+    {
+    <p>
+        Insert year:
+        @Html.TextBox("year", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" id="yearFilter" />
+    </p>
+
+    }
+    <br />
+    <small>Data in table for year: <b>@ViewBag.CurrentFilter</b> (change in input above)</small>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Client</th>
+                <th>January</th>
+                <th>February</th>
+                <th>March</th>
+                <th>April</th>
+                <th>May</th>
+                <th>June</th>
+                <th>July</th>
+                <th>August</th>
+                <th>September</th>
+                <th>October</th>
+                <th>November</th>
+                <th>December</th>
+                <th></th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var client in Model.Clients)
+            {
+                <tr>
+                    <td>@(counter += 1)</td>
+                    <td>@client.Name</td>
+                    <td>@{var sumByClientJanuary = Model.Invoices.Where(c => c.ClientName == client.Name && c.InvoiceDate.Month == 1 && c.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);}@sumByClientJanuary.ToString("N0")</td>
+                    <td>@{var sumByClientFebruary = Model.Invoices.Where(c => c.ClientName == client.Name && c.InvoiceDate.Month == 2 && c.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);}@sumByClientFebruary.ToString("N0")</td>
+                    <td>@{var sumByClientMarch = Model.Invoices.Where(c => c.ClientName == client.Name && c.InvoiceDate.Month == 3 && c.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);}@sumByClientMarch.ToString("N0")</td>
+                    <td>@{var sumByClientApril = Model.Invoices.Where(c => c.ClientName == client.Name && c.InvoiceDate.Month == 4 && c.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);}@sumByClientApril.ToString("N0")</td>
+                    <td>@{var sumByClientMay = Model.Invoices.Where(c => c.ClientName == client.Name && c.InvoiceDate.Month == 5 && c.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);}@sumByClientMay.ToString("N0")</td>
+                    <td>@{var sumByClientJune = Model.Invoices.Where(c => c.ClientName == client.Name && c.InvoiceDate.Month == 6 && c.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);}@sumByClientJune.ToString("N0")</td>
+                    <td>@{var sumByClientJuly = Model.Invoices.Where(c => c.ClientName == client.Name && c.InvoiceDate.Month == 7 && c.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);}@sumByClientJuly.ToString("N0")</td>
+                    <td>@{var sumByClientAugust = Model.Invoices.Where(c => c.ClientName == client.Name && c.InvoiceDate.Month == 8 && c.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);}@sumByClientAugust.ToString("N0")</td>
+                    <td>@{var sumByClientSeptember = Model.Invoices.Where(c => c.ClientName == client.Name && c.InvoiceDate.Month == 9 && c.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);}@sumByClientSeptember.ToString("N0")</td>
+                    <td>@{var sumByClientOctober = Model.Invoices.Where(c => c.ClientName == client.Name && c.InvoiceDate.Month == 10 && c.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);}@sumByClientOctober.ToString("N0")</td>
+                    <td>@{var sumByClientNovember = Model.Invoices.Where(c => c.ClientName == client.Name && c.InvoiceDate.Month == 11 && c.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);}@sumByClientNovember.ToString("N0")</td>
+                    <td>@{var sumByClientDecember = Model.Invoices.Where(c => c.ClientName == client.Name && c.InvoiceDate.Month == 12 && c.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);}@sumByClientDecember.ToString("N0")</td>
+                    <td></td>
+                    <td>@{var totalByClient = sumByClientJanuary + sumByClientFebruary + sumByClientMarch + sumByClientApril + sumByClientMay + sumByClientJune + sumByClientJuly + sumByClientAugust + sumByClientSeptember + sumByClientOctober + sumByClientNovember + sumByClientDecember;} @totalByClient.ToString("N0")</td>
+
+                </tr>
+            }
+
+
+
+        </tbody>
+        <tfoot>
+
+            <tr>
+                <td></td>
+                <td><b>TOTAL</b></td>
+                <td><b>@{var sumJanuary = Model.Invoices.Where(m => m.InvoiceDate.Month == 1 && m.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);} @sumJanuary.ToString("N0")</b></td>
+                <td><b>@{var sumFebruary = Model.Invoices.Where(m => m.InvoiceDate.Month == 2 && m.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);} @sumFebruary.ToString("N0")</b></td>
+                <td><b>@{var sumMarch = Model.Invoices.Where(m => m.InvoiceDate.Month == 3 && m.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);} @sumMarch.ToString("N0")</b></td>
+                <td><b>@{var sumApril = Model.Invoices.Where(m => m.InvoiceDate.Month == 4 && m.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);} @sumApril.ToString("N0")</b></td>
+                <td><b>@{var sumMay = Model.Invoices.Where(m => m.InvoiceDate.Month == 5 && m.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);} @sumMay.ToString("N0")</b></td>
+                <td><b>@{var sumJune = Model.Invoices.Where(m => m.InvoiceDate.Month == 6 && m.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);} @sumJune.ToString("N0")</b></td>
+                <td><b>@{var sumJuly = Model.Invoices.Where(m => m.InvoiceDate.Month == 7 && m.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);} @sumJuly.ToString("N0")</b></td>
+                <td><b>@{var sumAugust = Model.Invoices.Where(m => m.InvoiceDate.Month == 8 && m.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);} @sumAugust.ToString("N0")</b></td>
+                <td><b>@{var sumSeptember = Model.Invoices.Where(m => m.InvoiceDate.Month == 9 && m.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);} @sumSeptember.ToString("N0")</b></td>
+                <td><b>@{var sumOctober = Model.Invoices.Where(m => m.InvoiceDate.Month == 10 && m.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);} @sumOctober.ToString("N0")</b></td>
+                <td><b>@{var sumNovember = Model.Invoices.Where(m => m.InvoiceDate.Month == 11 && m.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);} @sumNovember.ToString("N0")</b></td>
+                <td><b>@{var sumDecember = Model.Invoices.Where(m => m.InvoiceDate.Month == 12 && m.InvoiceDate.Year.ToString() == ViewBag.CurrentFilter).Sum(tp => tp.TotalPrice - tp.VAT);} @sumDecember.ToString("N0")</b></td>
+                <td></td>
+                <td><b>@{var sumTotal = sumJanuary + sumFebruary + sumMarch + sumApril + sumMay + sumJune + sumJuly + sumAugust + sumSeptember + sumOctober + sumNovember + sumDecember;} @sumTotal.ToString("N0")</b></td>
+
+            </tr>
+
+        </tfoot>
+    </table>
+
+
+
+
+
+
+</div>
+
+
+

@@ -1,0 +1,172 @@
+﻿@using eManager.WebModels;
+@model IPagedList<ActivityViewModel>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Employee's Activities";
+    @foreach(var m in Model)
+    {
+        var currentModel = m.AllEmployees.Select(x => x.Id) ;
+    }
+
+
+
+}
+
+<style>
+
+
+    .activity-feed {
+        padding: 15px;
+    }
+
+        .activity-feed .feed-item {
+            position: relative;
+            padding-bottom: 20px;
+            padding-left: 30px;
+            border-left: 2px solid #e4e8eb;
+        }
+
+            .activity-feed .feed-item:last-child {
+                border-color: transparent;
+            }
+
+            .activity-feed .feed-item:after {
+                content: "";
+                display: block;
+                position: absolute;
+                top: 0;
+                left: -6px;
+                width: 10px;
+                height: 10px;
+                border-radius: 6px;
+                background: #fff;
+                border: 1px solid #f37167;
+            }
+
+            .activity-feed .feed-item .date {
+                position: relative;
+                top: -5px;
+                color: #8c96a3;
+                text-transform: uppercase;
+                font-size: 13px;
+            }
+
+            .activity-feed .feed-item .text {
+                position: relative;
+                top: -3px;
+            }
+</style>
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans" type="text/css">
+<div class="container">
+    <h2>Daily activities</h2>
+    <br /><br />
+    <div class="row col-md-12">
+
+        <div class="col-md-6">
+            <span>Search through activities </span><input id="searchActivity" type="text" placeholder="Search...">
+        </div>
+    </div>
+    <br />
+
+    <div class="activity-feed" id="activityDashboard">
+
+        @foreach (var activity in Model)
+        {
+
+
+            <div class="feed-item">
+
+
+
+                <div class="date">@activity.Date.ToLongDateString()</div>
+                <div class="text"><b>Description:</b> @activity.Description | <b>Client:</b> @activity.ClientName | <b>Duration:</b> @activity.Duration</div>
+                <div class="text"><b>STATUS:</b> @activity.ActivityStatusViewModel</div>
+                <div class="text pickedForActivity">
+                    <b>Employees appointed:</b>
+                    <hr />
+                    @foreach (var e in activity.EmployeeActivities.GroupBy(x => x.Id).Select(x => x.First()))
+                    {
+
+                        <p>
+                            <span>
+                                @e.FirstName @e.LastName
+                                @if (activity.ActivityStatusViewModel == ActivityStatusViewModel.Processing)
+                                {
+                                    <input asp-for="@e.Id" hidden />
+                                    <input asp-for="@activity.ActivityId" hidden />
+                                    <a value="@e.Id" href="../Employee/RemoveEmployeeFromActivity/?employeeId=@e.Id&activityId=@activity.ActivityId" class="fa fa-trash removeEmployee activeButtons" role="button"></a>
+                                }
+                            </span>
+                        </p>
+
+
+                    }
+                    @if (activity.ActivityStatusViewModel == ActivityStatusViewModel.Processing)
+                    {
+                        <div>
+                            <a asp-action="ConfirmActivity" asp-controller="Employee" asp-route-activityId="@activity.ActivityId" class="btn btn-primary activeButtons">Finish Activity</a>
+                        </div>
+                        <br />
+                        <a asp-action="UpdateActivityInfo" asp-controller="Employee" asp-route-id="@activity.ActivityId" class="btn btn-success activeButtons">Update Info</a>
+                        <a asp-action="PickEmployees" asp-controller="Employee" asp-route-id="@activity.ActivityId" class="btn btn-primary activeButtons">Add/Remove Employees</a>  
+
+                    }
+
+
+                    @if (activity.ActivityStatusViewModel == ActivityStatusViewModel.Finished)
+                    {
+                        <br />
+                        <div>
+                            <b>@activity.Description is finished!</b>
+                        </div>
+                        <hr />
+
+                    }
+
+
+
+                    <hr />
+                </div>
+                
+            </div>
+            <br />
+        }
+
+    </div>
+
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("EmployeesActivities",
+    new { page, sort = ViewBag.CurrentSort, filter = ViewBag.CurrentFilter }))
+
+    <div id="modalWrap">
+
+    </div>
+
+</div>
+<script>
+
+    $(function () {
+        $("#addActivityModal").modal();
+    });
+
+
+    $(document).ready(function () {
+        $("#searchActivity").keyup(function () {
+
+            var value = $(this).val().toLowerCase();
+
+            console.log(value);
+            $("#activityDashboard .feed-item").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+
+
+
+</script>
+

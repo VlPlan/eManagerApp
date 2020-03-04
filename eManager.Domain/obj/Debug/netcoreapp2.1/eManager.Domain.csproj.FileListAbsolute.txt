@@ -1,0 +1,9 @@
+C:\Users\User\source\repos\eManager\eManager.Domain\bin\Debug\netcoreapp2.1\eManager.Domain.deps.json
+C:\Users\User\source\repos\eManager\eManager.Domain\bin\Debug\netcoreapp2.1\eManager.Domain.dll
+C:\Users\User\source\repos\eManager\eManager.Domain\bin\Debug\netcoreapp2.1\eManager.Domain.pdb
+C:\Users\User\source\repos\eManager\eManager.Domain\obj\Debug\netcoreapp2.1\eManager.Domain.csproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\eManager\eManager.Domain\obj\Debug\netcoreapp2.1\eManager.Domain.AssemblyInfoInputs.cache
+C:\Users\User\source\repos\eManager\eManager.Domain\obj\Debug\netcoreapp2.1\eManager.Domain.AssemblyInfo.cs
+C:\Users\User\source\repos\eManager\eManager.Domain\obj\Debug\netcoreapp2.1\eManager.Domain.dll
+C:\Users\User\source\repos\eManager\eManager.Domain\obj\Debug\netcoreapp2.1\eManager.Domain.pdb
+C:\Users\User\source\repos\eManager\eManager.Domain\obj\Debug\netcoreapp2.1\eManager.Domain.csprojAssemblyReference.cache

@@ -1,0 +1,60 @@
+﻿
+@using eManager.WebModels;
+@model ProductViewModel
+
+@{
+    ViewBag.Title = "Adding product";
+    Layout = "_Layout";
+
+}
+
+
+<div class="modal fade" id="addProductModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Product details</h4>
+            </div>
+            <div class="modal-body">
+
+                <form method="post" enctype="multipart/form-data" asp-controller="Company" asp-action="AddProductToCompany">
+
+                    @Html.HiddenFor(model => model.Id)
+                    <label for="Name">Name:</label>
+                    @Html.TextBox("Name", null, new { @class = "form-control" })<br />
+
+               
+                    <label for="Price">Price:</label>
+                    @Html.TextBox("Price", null, new { @class = "form-control" })<br />
+
+                    <button type="submit" class="btn btn-success" value="@Model.Id">Add</button>
+
+                   
+
+
+
+                </form>
+
+
+            </div>
+          
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.href='@Url.Action("CompanyInfo", "Company")'">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+  
+
+    $(function () {
+        $("#addProductModal").modal();
+    });
+
+
+
+</script>

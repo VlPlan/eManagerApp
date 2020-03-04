@@ -1,0 +1,81 @@
+﻿
+@using eManager.WebModels;
+@model List<ServiceViewModel>
+
+@{
+    ViewBag.Title = "Pick services for invoice";
+    Layout = "_Layout";
+
+}
+
+<div class="modal fade" id="pickServices">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            
+                <div class="modal-body" style="height:600px;overflow-y:scroll">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Service</th>
+                                <th>Price (without VAT)</th>
+                                <th>Currency</th>
+                                <th></th>
+
+                            </tr>
+                        </thead>
+                        <tbody class="row">
+                            @foreach (var service in Model)
+                            {
+
+                                <tr>
+                                    <td>@service.ServiceId</td>
+                                    <td>@service.Name</td>
+                                    <td>@service.Price</td>
+                                    <td>@service.Currency</td>
+                                    <td>
+                                        <button value="@service.ServiceId" class="btn btn-primary serviceItem" role="button" type="submit">Add To Invoice</button>
+
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                <script>
+
+                    $(function () {
+                        $("#pickServices").modal();
+                    });
+
+                    let services = document.getElementsByClassName("row")[0];
+                    console.log(services);
+                    services.addEventListener("click", function (e) {
+                      
+                        e.stopPropagation();
+                        let target = e.target;
+
+
+                        let targetId = target.classList.contains("serviceItem") ? target.value : null;
+                        console.log(targetId);
+                        console.log(targetId);
+                        if (targetId != null) {
+                            fetch("/Invoice/AddDetailsToInvoice?serviceId=" + targetId, {
+                                method: "post",
+                                
+                            })
+
+        
+
+
+                        }
+
+
+                    })
+
+                </script>

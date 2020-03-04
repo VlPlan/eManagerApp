@@ -1,0 +1,145 @@
+﻿@using eManager.WebModels;
+@model ActivityViewModel
+
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Pick Employees";
+
+}
+
+
+
+
+<div class="container">
+
+    @Html.HiddenFor(model => model.ActivityId)
+
+    <label for="Description">Description</label>
+    @Model.Description<br />
+    <label for="Duration">Total working hours (duration):</label>
+    @Model.Duration<br />
+
+    <div>
+        <label for="Date">Date of activity:</label>
+        @Model.Date
+    </div>
+    <br />
+
+    <div>
+        <label for="Client">Client:</label>
+        @Model.Client.Name<br />
+    </div>
+
+
+    <br />
+    <p>Available employees for @Model.Description</p>
+    <br />
+    <div class="row pickedCatalog col-md-12" id="employeesCatalog">
+
+        <div id="msgRemove" class="alert-danger" style="display:none">Employee removed from @Model.Description!</div>
+        <div class="pickedForActivity">
+            <p>Current employees on activity are:</p>
+            <ul>
+                @foreach (var a in Model.EmployeeActivities)
+                {
+                    <li>@a.FirstName @a.LastName</li>
+                }
+            </ul>
+            <hr />
+        </div>
+    </div>
+    <br />
+    <div class="container" id="employees">
+
+        <div id="msg" class="alert-success" style="display:none">Employee Added!</div>
+
+        <h6>Pick employees for activity</h6>
+        <hr />
+        <div id="msg" class="alert-success" style="display:none">Employee Added!</div>
+        <div class="row col-md-12 catalog" id="employeesCatalog">
+
+            @foreach (var i in Model.AllEmployees)
+            {
+                
+                    @*@if (!Model.EmployeeActivities.Contains(i))
+                    {*@
+                        <div class="w3-card-4 col-md-3">
+
+                            <header class="w3-container w3-light-grey">
+                                <h3>@i.FirstName @i.LastName</h3>
+                            </header>
+
+                            <div class="w3-container">
+                                <p># @i.EmployeeNumber</p>
+                                <hr>
+                                <img src="~/images/worker.png" alt="Avatar" class="w3-left w3-circle" width="50" height="70">
+                                <p>@i.DateOfBirth</p>
+                            </div>
+                            <div>
+                                <input asp-for="@i.Id" hidden />
+                                <input asp-for="@Model.ActivityId" hidden />
+                                <a value="@i.Id" href="../AddEmployeesToActivity/?employeeId=@i.Id&activityId=@Model.ActivityId" class="w3-button w3-block w3-dark-grey employeeCard" role="button">+Pick</a>
+
+                            </div>
+
+                        </div>
+                    @*}*@
+
+
+                }
+
+
+
+
+
+            </div>
+    </div>
+</div>
+        <script>
+            $(function () {
+                $("#updateActivityModal").modal();
+            });
+
+
+
+
+            let employees = document.getElementsByClassName("catalog")[0];
+            console.log(employees);
+            employees.addEventListener("click", function (e) {
+                e.stopPropagation();
+                let target = e.target;
+
+
+                let targetId = target.classList.contains("employeeCard") ? target.value : null;
+                console.log(targetId);
+
+
+                if (targetId != null) {
+                    fetch("/Employee/AddEmployeesToActivity?employeeId=" + targetId, {
+                        method: "post",
+
+                    })
+
+
+                }
+
+
+            })
+
+            $('.employeeCard').click(function () {
+                setTimeout(function () {
+
+                    $("#msg").show().fadeOut(3000);
+                }, 400)
+            })
+
+
+            $('.removeEmployee').click(function () {
+                setTimeout(function () {
+
+                    $("#msgRemove").show().fadeOut(3000);
+                }, 400)
+            })
+        </script>
+

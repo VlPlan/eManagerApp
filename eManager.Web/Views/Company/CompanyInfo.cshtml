@@ -1,0 +1,84 @@
+﻿@using eManager.WebModels;
+@model CompanyViewModel
+
+@{
+    ViewBag.Title = "Company info";
+
+}
+
+<div class="container" id="listCompanyProducts">
+    <h2>Company products information</h2>
+
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Product name</th>
+                <th>Price</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.CompanyProducts)
+            {
+                <tr>
+
+                    <td>@product.Id</td>
+                    <td>@product.Name</td>
+                    <td>@product.Price</td>
+                    <td>
+
+                        <a asp-action="UpdateCompanyInfo" asp-controller="Company" asp-route-id="@product.Id" class="btn btn-success" id="editBtn">Edit</a> |
+                        <a asp-action="RemoveCompany" asp-controller="Company" asp-route-id="@product.Id" class="btn btn-danger" id="removeBtn">Remove</a>
+
+
+                    </td>
+                </tr>
+            }
+
+
+
+        </tbody>
+    </table>
+
+</div>
+
+<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.href='@Url.Action("ShowCompanies", "Company")'">Back</button>
+<div id="modalWrapper">
+
+</div>
+
+
+<script>
+
+   //$(function () {
+   //     $("#editModal").modal();
+   // });
+
+
+
+   // $(function () {
+   //     $("#editModal").modal();
+   // });
+
+   // function editEmployeeInfo(employeeId) {
+   //     $.ajax({
+   //         url: "/Company//" + employeeId,
+   //         data: {
+   //             Id: $(this).attr('data-id')
+   //         },
+
+   //         success: function (emp) {
+   //             $("#modalWrap").html(emp);
+   //         }
+   //     });
+   // }
+
+
+
+
+
+
+</script>
+

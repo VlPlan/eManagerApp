@@ -1,0 +1,71 @@
+﻿@using eManager.WebModels;
+@model ActivityViewModel
+
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Pick Employees";
+
+
+}
+
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<div class="container">
+
+
+
+    <form method="post" asp-controller="Employee" asp-action="UpdateActivityInfo">
+        <label for="Description">Description</label>
+        @Html.TextBox("Description", null, new { @class = "form-control" })<br />
+        <label for="Duration">Total working hours (duration):</label>
+        @Html.TextBox("Duration", null, new { @class = "form-control" })<br />
+
+        <div class="modal-body">
+
+            @Html.HiddenFor(model => model.ActivityId)
+
+            <div>
+                <label for="Date">Date of activity:</label>
+                @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "activityDate", @Value = DateTime.Today.ToString("dd/MM/yyyy") } })
+                @Html.DisplayFor(model => model.Date)
+                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-dang" })
+            </div>
+            <br />
+
+            <div>
+                <label for="Client">Client:</label>
+                @Html.DropDownListFor(c => c.ClientSelected, Model.Clients, "--Select client--")
+                @Html.DisplayFor(model => model.ClientName)
+
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Save Changes</button>
+    </form>
+    <br />
+    <hr />
+    @if (Model.EmployeeActivities.Count() == 0)
+    {
+        <p><em>No employees added for this activity</em></p>
+    }
+    else
+
+    {
+        <p>Current employees on activity are:</p>
+        <ul>
+            @foreach (var employee in Model.EmployeeActivities)
+            {
+
+                <li>@employee.FirstName @employee.LastName <span style="color:green"> -- included in activity!</span></li>
+            }
+
+        </ul>
+
+    }
+    <hr />
+</div>
+<br/><br/>
+<a asp-action="EmployeesActivities" asp-controller="Employee">Back to Activities</a>
+

@@ -1,0 +1,154 @@
+﻿@using eManager.WebModels;
+@model IPagedList<InvoiceViewModel>
+
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+
+
+
+
+
+
+
+<link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Invoices";
+    var counter = 0;
+}
+
+<div class="container" id="invoices">
+    <h3 class="text-muted">Invoices</h3>
+    <br />
+    @using (Html.BeginForm("Invoices", "Invoice", FormMethod.Get))
+    {
+        <p>
+            Find by client: @Html.TextBox("search", ViewBag.CurrentFilter as string)
+            <input type="submit" value="Search" />
+        </p>
+    }
+    <br />
+    <small><em>Prices are in MKD (denars)</em></small>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Invoice No.</th>
+                <th>
+
+                    @Html.ActionLink("Client", "Invoices", new { sort = ViewBag.SortByClient, filter = ViewBag.CurrentFilter })
+                </th>
+                <th>
+                    @Html.ActionLink("Invoice Date", "Invoices", new { sort = ViewBag.SortByDate, filter = ViewBag.CurrentFilter })
+                </th>
+                <th>
+                    @Html.ActionLink("Due Date", "Invoices", new { sort = ViewBag.SortByDueDate, filter = ViewBag.CurrentFilter })
+                </th>
+                <th>Price (VAT excl.)</th>
+                <th>VAT</th>
+                <th>
+                    @Html.ActionLink("Total Price", "Invoices", new { sort = ViewBag.SortByTotalPrice, filter = ViewBag.CurrentFilter })
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            
+            @foreach (var invoice in Model)
+            {
+
+                <tr>
+                    <td>@(counter += 1)</td>
+                    <td>@invoice.InvoiceNumber</td>
+                    <td>@invoice.ClientName</td>
+                    <td>@invoice.InvoiceDate.ToString("dd.MM.yyyy")</td>
+                    <td>@invoice.DueDate.Date.ToString("dd.MM.yyyy")</td>
+                    <td>
+                        @if (invoice.InvoiceServices.Any())
+                        {
+                            @if (invoice.InvoiceServices.Any(x => x.CurrencyRate == 1 && x.Currency == CurrencyView.EUR))
+                            {
+                                invoice.Price = invoice.Price * 61.5;
+
+                            }
+
+                            @if (invoice.ClientName.ToLower().Contains("arcelor") || invoice.ClientName.ToLower().Contains("aрцелор") || invoice.ClientName.ToLower().Contains("Liberty") || invoice.ClientName.ToLower().Contains("Либерти"))
+                            {
+                                invoice.VAT = invoice.VAT * 0;
+                                invoice.TotalPrice = invoice.Price;
+                            }
+                        }
+
+
+                        @invoice.Price.ToString("N0")
+
+
+                    </td>
+                    <td>
+                        
+                        @if (invoice.InvoiceServices.Any(x => x.CurrencyRate == 1 && x.Currency == CurrencyView.EUR))
+                        {
+                            invoice.VAT = 0;
+                            @invoice.VAT
+                        }
+                        @if (invoice.InvoiceServices.Any(x => x.CurrencyRate != 1 && x.Currency == CurrencyView.EUR) || invoice.InvoiceServices.Any(x=>x.Currency == CurrencyView.MKD))
+                        {
+                            @invoice.VAT
+                        }
+
+                    </td>
+                    <td>
+                       
+                        @if (invoice.InvoiceServices.Any(x => x.CurrencyRate == 1 && x.Currency == CurrencyView.EUR))
+                        {
+                            invoice.TotalPrice = invoice.TotalPrice * 61.5/1.18;
+                            @invoice.TotalPrice
+                        }
+                        @if (invoice.InvoiceServices.Any(x => x.CurrencyRate != 1 && x.Currency == CurrencyView.EUR) || invoice.InvoiceServices.Any(x => x.Currency == CurrencyView.MKD))
+                        {
+                            @invoice.TotalPrice.ToString("N0")
+                        }
+
+
+                    </td>
+
+                    <td>
+                        <a asp-controller="Invoice" asp-action="InvoiceDetails" asp-route-id="@invoice.Id"><i class="fa fa-info" aria-hidden="true"></i> Details</a> |
+                        <a asp-controller="Invoice" asp-action="DeleteInvoice" asp-route-id="@invoice.Id"><i class="fa fa-trash" aria-hidden="true"></i> Remove</a>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+        <tfoot>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Total:</td>
+                <td>
+                    @Model.Sum(x => x.Price).ToString("N0")
+                </td>
+                <td>
+                    @Model.Sum(x=>x.VAT).ToString("N0")
+                </td>
+                <td>
+                    @Model.Sum(x => x.TotalPrice).ToString("N0")
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Invoices", 
+    new { page, sort = ViewBag.CurrentSort, filter = ViewBag.CurrentFilter }))
+
+
+
+</div>
+
+
+
